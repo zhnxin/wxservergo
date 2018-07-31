@@ -1,0 +1,8 @@
+Server = ":8088"
+LogLevel = "debug"
+[wechat]
+CorpID = ""
+AgentID = ""
+Token = ""
+EncodingAESKey = ""
+Secret = ""
