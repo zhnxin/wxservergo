@@ -5,7 +5,7 @@ import (
 
 	wechatapi "../common/utils/wechatapi"
 	wxbizmsgcrypt "../common/utils/wxbizmsgcrypt"
-	"../dto"
+	"../dto/wechatapiget"
 )
 
 type WechatService interface {
@@ -27,7 +27,7 @@ func (s *BaseService) URLVerify(msgSignature, timestamp, nonce, echostr string) 
 
 }
 
-func (s *BaseService) GetUser(partyID string) ([]dto.UserInfo, error) {
+func (s *BaseService) GetUser(partyID string) ([]wechatapiget.UserInfo, error) {
 	userinfoList, err := s.wechatAPI.GetUserList(partyID)
 	if err != nil {
 		return nil, err
