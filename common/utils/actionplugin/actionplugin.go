@@ -2,7 +2,7 @@ package actionplugin
 
 import (
 	"fmt"
-	"os"
+	"path/filepath"
 	"plugin"
 	"sync"
 
@@ -32,8 +32,8 @@ func New(fileName string) *ActionPlugin {
 func (ap *ActionPlugin) Load() {
 	ap.rwLock.Lock()
 	defer ap.rwLock.Unlock()
-	filePath := fmt.Sprintf("%s%saction%s%s.so", settings.BaseDir, os.PathSeparator, os.PathSeparator, ap.fileName)
-	p, err := plugin.Open(filePath)
+	pluginPath := filepath.Join(settings.BaseDir, "plugin", fmt.Sprintf("%s.so", ap.fileName))
+	p, err := plugin.Open(pluginPath)
 	if err != nil {
 		settings.GetLogger(nil).Println(err.Error())
 		ap.handlerFactory = nil

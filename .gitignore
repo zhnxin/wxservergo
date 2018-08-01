@@ -39,5 +39,5 @@ nohup.out
 tmp/*
 *.bak
 config.toml
-action/*
+plugin/*
 *_test.go
