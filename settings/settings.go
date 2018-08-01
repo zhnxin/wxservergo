@@ -7,7 +7,14 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-var logger *log.Logger
+var (
+	logger  *log.Logger
+	BaseDir string
+)
+
+func init() {
+	BaseDir, _ = os.Getwd()
+}
 
 type wechat struct {
 	CorpID         string
