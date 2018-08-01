@@ -60,17 +60,17 @@ type WXBizMsgCrypt struct {
 	m_sCorpID string
 }
 
-func GenerateWXBizMsgCrypt(Token, sEncodingAESKey, sCorpID string) (int, WXBizMsgCrypt) {
+func GenerateWXBizMsgCrypt(Token, sEncodingAESKey, sCorpID string) (int, *WXBizMsgCrypt) {
 	aseKey := fmt.Sprintf("%s=", sEncodingAESKey)
 	m_sKey, err := base64.StdEncoding.DecodeString(aseKey)
 	if err != nil {
 		fmt.Println(err)
-		return WXBizMsgCrypt_DecodeBase64_Error, WXBizMsgCrypt{}
+		return WXBizMsgCrypt_DecodeBase64_Error, nil
 	}
 	if len(m_sKey) != kAesKeySize {
-		return WXBizMsgCrypt_IllegalAesKey, WXBizMsgCrypt{}
+		return WXBizMsgCrypt_IllegalAesKey, nil
 	}
-	return WXBizMsgCrypt_OK, WXBizMsgCrypt{Token, m_sKey, sCorpID}
+	return WXBizMsgCrypt_OK, &WXBizMsgCrypt{Token, m_sKey, sCorpID}
 }
 
 func (msgCrypt *WXBizMsgCrypt) GetCorpID() string {

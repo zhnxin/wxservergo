@@ -10,7 +10,7 @@ import (
 	"../../../settings"
 )
 
-type HandlerFunc func(*dto.WXBizMsg) (*dto.WechatReplyMsg, error)
+type HandlerFunc func() (*dto.WechatReplyMsg, error)
 type HandlerFactoryFunc func(*dto.WXBizMsg) (HandlerFunc, error)
 
 type ActionPlugin struct {
@@ -32,7 +32,7 @@ func New(fileName string) *ActionPlugin {
 func (ap *ActionPlugin) Load() {
 	ap.rwLock.Lock()
 	defer ap.rwLock.Unlock()
-	filePath := fmt.Sprintf("%s%saction%s%s", settings.BaseDir, os.PathSeparator, os.PathSeparator, ap.fileName)
+	filePath := fmt.Sprintf("%s%saction%s%s.so", settings.BaseDir, os.PathSeparator, os.PathSeparator, ap.fileName)
 	p, err := plugin.Open(filePath)
 	if err != nil {
 		settings.GetLogger(nil).Println(err.Error())

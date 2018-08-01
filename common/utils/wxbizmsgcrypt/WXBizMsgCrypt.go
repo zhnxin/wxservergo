@@ -19,11 +19,15 @@ func GetSHA1(token, timestamp, nonce, encrypt string) string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func (msgCrypt *WXBizMsgCrypt) DecryptMsg(sPostData, sMsgSignature, sTimeStamp, sNonce string) (int, []byte) {
+func (msgCrypt *WXBizMsgCrypt) DecryptMsgText(sPostData, sMsgSignature, sTimeStamp, sNonce string) (int, []byte) {
 	err, msg := XmlParseExtract(sPostData)
 	if err != nil {
 		return WXBizMsgCrypt_ParseXml_Error, nil
 	}
+	return msgCrypt.DecryptMsg(msg, sMsgSignature, sTimeStamp, sNonce)
+}
+
+func (msgCrypt *WXBizMsgCrypt) DecryptMsg(msg ReviceMsg, sMsgSignature, sTimeStamp, sNonce string) (int, []byte) {
 	signature := GetSHA1(msgCrypt.m_sToken, sTimeStamp, sNonce, msg.Encrypt)
 	if sMsgSignature != signature {
 		return WXBizMsgCrypt_ValidateSignature_Error, nil

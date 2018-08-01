@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	setting "../../../settings"
-	"github.com/coocood/freecache"
+	freecache "github.com/coocood/freecache"
 )
 
 const CacheMemSize = 10 * 1024 * 1024
