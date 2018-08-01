@@ -1,6 +1,12 @@
 package dto
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+	"time"
+
+	"../common/constatns"
+)
 
 type WXBizMsg struct {
 	XMLName      xml.Name `xml:"xml"`
@@ -45,4 +51,12 @@ type WechatReplyMsg struct {
 func (msg WechatReplyMsg) String() string {
 	data, _ := xml.Marshal(msg)
 	return string(data)
+}
+
+func NewTextWechatReplyMsg(content string) *WechatReplyMsg {
+	return &WechatReplyMsg{
+		MsgType:    constatns.WechatMsgTypeText,
+		Content:    content,
+		CreateTime: fmt.Sprintf("%d", time.Now().Unix()),
+	}
 }

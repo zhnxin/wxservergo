@@ -40,7 +40,13 @@ func (s *demoService) MessageHandler(msg *dto.WXBizMsg) (*dto.WechatReplyMsg, er
 	if err != nil {
 		return nil, err
 	}
-	return fn()
+	replyMsg, err := fn(msg)
+	if err != nil {
+		return nil, err
+	}
+	replyMsg.ToUserName = msg.FromUserName
+	replyMsg.FromUserName = msg.ToUserName
+	return replyMsg, nil
 }
 func (s *demoService) ReloadPlugin() {
 	s.actionP.Load()

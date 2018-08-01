@@ -10,7 +10,7 @@ import (
 	"../../../settings"
 )
 
-type HandlerFunc func() (*dto.WechatReplyMsg, error)
+type HandlerFunc func(*dto.WXBizMsg) (*dto.WechatReplyMsg, error)
 type HandlerFactoryFunc func(*dto.WXBizMsg) (HandlerFunc, error)
 
 type ActionPlugin struct {
@@ -35,19 +35,19 @@ func (ap *ActionPlugin) Load() {
 	pluginPath := filepath.Join(settings.BaseDir, "plugin", fmt.Sprintf("%s.so", ap.fileName))
 	p, err := plugin.Open(pluginPath)
 	if err != nil {
-		settings.GetLogger(nil).Println(err.Error())
+		settings.GetLogger(nil).Printf("actionplugin:open plugin:%v", err)
 		ap.handlerFactory = nil
 		return
 	}
 	handler, err := p.Lookup("GetHandler")
 	if err != nil {
-		settings.GetLogger(nil).Println(err.Error())
+		settings.GetLogger(nil).Printf("actionplugin:load function:%v", err)
 		ap.handlerFactory = nil
 		return
 	}
-	fn, ok := handler.(HandlerFactoryFunc)
+	fn, ok := handler.(func(*dto.WXBizMsg) (HandlerFunc, error))
 	if !ok {
-		settings.GetLogger(nil).Println("some err with plugin entry")
+		settings.GetLogger(nil).Println("actionplugin:fail to math the type of `GetHandler`")
 		ap.handlerFactory = nil
 		return
 	}
