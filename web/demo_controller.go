@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 
+	"../common/utils/wxbizmsgcrypt"
 	"../service"
 	"github.com/kataras/iris"
 )
@@ -42,7 +43,7 @@ func (c *DemoController) Post() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	replyMsg, err := c.Service.MessageHandler(&msg)
+	replyMsg, err := c.Service.MessageHandler(msg)
 	if err != nil {
 		return "", err
 	}
