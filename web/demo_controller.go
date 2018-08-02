@@ -141,3 +141,7 @@ func (c *DemoController) PostText() error {
 	return nil
 
 }
+
+func (c *DemoController) GetPlugin() {
+	c.Service.ReloadPlugin()
+}

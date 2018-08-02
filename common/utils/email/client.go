@@ -33,19 +33,6 @@ func New(user, password, nickName, host string, port int, isSsl bool) *Client {
 	return ec
 }
 
-func (ec *Client) getDialClient() (*smtp.Client, error) {
-	host, _, _ := net.SplitHostPort(ec.addr)
-	tlsconfig := &tls.Config{
-		InsecureSkipVerify: true,
-		ServerName:         host,
-	}
-	conn, err := tls.Dial("tcp", ec.addr, tlsconfig)
-	if err != nil {
-		return nil, fmt.Errorf("DialConn:%v", err)
-	}
-	return smtp.NewClient(conn, host)
-}
-
 func (ec *Client) generateEmailMsg(toUser []string, subject, content string) []byte {
 	return ec.generateEmailMsgByte(toUser, subject, []byte(content))
 }
@@ -57,7 +44,16 @@ func (ec *Client) generateEmailMsgByte(toUser []string, subject string, body []b
 }
 
 func (ec *Client) sendMailTLS(toUser []string, msg []byte) error {
-	client, err := ec.getDialClient()
+	host, _, _ := net.SplitHostPort(ec.addr)
+	tlsconfig := &tls.Config{
+		InsecureSkipVerify: true,
+		ServerName:         host,
+	}
+	conn, err := tls.Dial("tcp", ec.addr, tlsconfig)
+	if err != nil {
+		return fmt.Errorf("DialConn:%v", err)
+	}
+	client, err := smtp.NewClient(conn, host)
 	if err != nil {
 		return fmt.Errorf("Client:generateClient:%v", err)
 	}
