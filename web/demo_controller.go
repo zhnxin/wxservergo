@@ -9,6 +9,7 @@ import (
 	"../settings"
 	"encoding/json"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/mvc"
 )
 
 type textSendDto struct {
@@ -28,13 +29,18 @@ func (c *DemoController) getQueryArg() (msgSignature, timestamp, nonce string) {
 	return
 }
 
+func (c *DemoController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "/public", "Get")
+	b.Handle("POST", "/public", "Post")
+}
+
 func (c *DemoController) Get() error {
 	msgSignature, timestamp, nonce := c.getQueryArg()
-	echostr := c.Ctx.URLParam("echostr")
-	if msgSignature == "" || timestamp == "" || nonce == "" || echostr == "" {
+	echoStr := c.Ctx.URLParam("echostr")
+	if msgSignature == "" || timestamp == "" || nonce == "" || echoStr == "" {
 		return fmt.Errorf("lack of query arguments")
 	}
-	res, err := c.Service.URLVerify(msgSignature, timestamp, nonce, echostr)
+	res, err := c.Service.URLVerify(msgSignature, timestamp, nonce, echoStr)
 	if err != nil {
 		return err
 	}
