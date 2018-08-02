@@ -9,15 +9,15 @@
 
 代码中提供了democontroller,具有以下功能，具体使用是可以根据自己业务需求编写对应的controller。为了安全考虑，理论上建议不应该将除了微信企业号上设置的第三方url外的接口暴露给外网。
 
-| api | http方法 | 功能 | 
-| - | - | - | 
-| / | get | 微信第三方接口验证 | 
-| / | post | 微信消极事件处理 | 
-| /text/?party_id | get | 获取微信企业号部门成员信息 | 
-| /text/?party_id | post | 给微信企业号对应部门推送文本消息 | 
-| /email/?party_id | get | 获取微信企业号部门成员email列表 | 
-| /email/?party_id | post | 给微信企业号对应部门发送邮件 | 
-| /phone/?party_id | get | 获取微信企业号部门成员手机号码列表 | 
+| api | http方法 | 功能 |
+| - | - | - |
+| / | get | 微信第三方接口验证 |
+| / | post | 微信消极事件处理 |
+| /text/?party_id | get | 获取微信企业号部门成员信息 |
+| /text/?party_id | post | 给微信企业号对应部门推送文本消息 |
+| /email/?party_id | get | 获取微信企业号部门成员email列表 |
+| /email/?party_id | post | 给微信企业号对应部门发送邮件 |
+| /phone/?party_id | get | 获取微信企业号部门成员手机号码列表 |
 | /plugin | get | 重新加载plugin |
 
 接口测试
