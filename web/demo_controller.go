@@ -68,6 +68,7 @@ func (c *DemoController) Post() error {
 		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
+	c.Ctx.Application().Logger().Infof("DemoControler:Post:SendMsg:%v", replyMsg)
 	encryptBytes, err := c.Service.EncryptMsg(replyMsg, nonce)
 	if err != nil {
 		c.Ctx.Application().Logger().Error(err)

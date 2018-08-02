@@ -53,8 +53,6 @@ func (s *demoService) MessageHandler(msg *dto.WXBizMsg) (*dto.WechatReplyMsg, er
 	if err != nil {
 		return nil, err
 	}
-	replyMsg.ToUserName = msg.FromUserName
-	replyMsg.FromUserName = msg.ToUserName
 	return replyMsg, nil
 }
 func (s *demoService) ReloadPlugin() {
