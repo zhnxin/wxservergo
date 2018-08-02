@@ -6,8 +6,14 @@ import (
 
 	"../common/utils/wxbizmsgcrypt"
 	"../service"
+	"../settings"
 	"github.com/kataras/iris"
 )
+
+type textSendDto struct {
+	Subject string `json:"subject"`
+	Content string `json:"content"`
+}
 
 type DemoController struct {
 	Service service.DemoService
@@ -71,6 +77,19 @@ func (c *DemoController) GetEmail() error {
 	}
 	_, err = c.Ctx.WriteString(strings.Join(emailList, " "))
 	return err
+}
+
+func (c *DemoController) PostEmail() error {
+	jsonData := &textSendDto{}
+	c.Ctx.ReadJSON(jsonData)
+	PartyID := c.Ctx.URLParam("party_id")
+	toUser, err := c.Service.GetEmailList(PartyID)
+	if err != nil {
+		return err
+	}
+	settings.GetLogger(nil).Printf("send email to party:%s->%v", PartyID, toUser)
+	c.Service.SendEmail(toUser, jsonData.Subject, jsonData.Content)
+	return nil
 }
 
 func (c *DemoController) GetPhone() error {

@@ -1,10 +1,14 @@
 package service
 
 import (
+	"fmt"
+
 	"../common/utils/actionplugin"
+	"../common/utils/email"
 	"../common/utils/wxbizmsgcrypt"
 	"../dto"
 	"../dto/wechatapiget"
+	"../settings"
 )
 
 type DemoService interface {
@@ -16,14 +20,16 @@ type DemoService interface {
 	GetUser(string) ([]wechatapiget.UserInfo, error)
 	GetEmailList(string) (emailList []string, err error)
 	GetPhoneList(string) (phoneList []string, err error)
+	SendEmail([]string, string, string) error
 }
 
 type demoService struct {
 	baseService *BaseService
 	actionP     *actionplugin.ActionPlugin
+	emailClient *email.Client
 }
 
-func NewDemoService(token, sEncodingAESKey, sCorpID, sCorpSecret, agentID string) (DemoService, error) {
+func NewDemoService(token, sEncodingAESKey, sCorpID, sCorpSecret, agentID string, emailClient *email.Client) (DemoService, error) {
 	baseService, err := NewBaseService(token, sEncodingAESKey, sCorpID, sCorpSecret, agentID)
 	if err != nil {
 		return nil, err
@@ -32,6 +38,7 @@ func NewDemoService(token, sEncodingAESKey, sCorpID, sCorpSecret, agentID string
 	return &demoService{
 		baseService: baseService,
 		actionP:     actionP,
+		emailClient: emailClient,
 	}, nil
 }
 
@@ -71,4 +78,16 @@ func (s *demoService) EncryptMsg(msg *dto.WechatReplyMsg, nonce string) ([]byte,
 
 func (s *demoService) DecryptMsg(msg wxbizmsgcrypt.ReviceMsg, sMsgSignature, sTimeStamp, sNonce string) (*dto.WXBizMsg, error) {
 	return s.baseService.DecryptMsg(msg, sMsgSignature, sTimeStamp, sNonce)
+}
+
+func (s *demoService) SendEmail(toUser []string, subject string, content string) error {
+	if s.emailClient == nil {
+		return fmt.Errorf("not email client")
+	}
+	go func() {
+		if err := s.emailClient.SendEmail(toUser, subject, content); err != nil {
+			settings.GetLogger(nil).Println(err.Error())
+		}
+	}()
+	return nil
 }

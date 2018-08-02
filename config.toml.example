@@ -6,3 +6,10 @@ AgentID = ""
 Token = ""
 EncodingAESKey = ""
 Secret = ""
+[email]
+Host = ""
+Port = ""
+IsSSL = true
+User =""
+NickName = ""
+Password = ""

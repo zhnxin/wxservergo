@@ -18,8 +18,8 @@ type Client struct {
 }
 
 //New new email client
-func New(user, password, nickName, host string, port int, isSsl bool) Client {
-	ec := Client{
+func New(user, password, nickName, host string, port int, isSsl bool) *Client {
+	ec := &Client{
 		user:  user,
 		addr:  fmt.Sprintf("%s:%d", host, port),
 		isSSL: isSsl,
@@ -97,8 +97,8 @@ func (ec *Client) sendMail(toUser []string, msg []byte) error {
 	return smtp.SendMail(ec.addr, ec.auth, ec.user, toUser, msg)
 }
 
-//Send send email by string content
-func (ec *Client) Send(toUser []string, subject string, content string) error {
+//SendEmail send email by string content
+func (ec *Client) SendEmail(toUser []string, subject string, content string) error {
 	msg := ec.generateEmailMsg(toUser, subject, content)
 	if ec.isSSL {
 		return ec.sendMailTLS(toUser, msg)
@@ -106,11 +106,22 @@ func (ec *Client) Send(toUser []string, subject string, content string) error {
 	return ec.sendMail(toUser, msg)
 }
 
-//SendByte send email by byte body
-func (ec *Client) SendByte(toUser []string, subject string, body []byte) error {
+//SendEmailByte send email by byte body
+func (ec *Client) SendEmailByte(toUser []string, subject string, body []byte) error {
 	msg := ec.generateEmailMsgByte(toUser, subject, body)
 	if ec.isSSL {
 		return ec.sendMailTLS(toUser, msg)
 	}
 	return ec.sendMail(toUser, msg)
+}
+
+var client *Client
+
+func GenerateEmailClientSingleton(user, password, nickName, host string, port int, isSsl bool) *Client {
+	client = New(user, password, nickName, host, port, isSsl)
+	return client
+}
+
+func GetEmailClientSingleton() *Client {
+	return client
 }
