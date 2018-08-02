@@ -72,7 +72,7 @@ curl -XPOST -d '{"subject":"发送测试邮件","content":"wxservergo 邮件发�
 
 示例：`plugin/demo.go`
 
-由于微信消息处理模块与应用基本无关，且为方便扩展，该模块采取plugin模式进行开发。为了与service整合，编写的pluginx必须包含一个固定名称的plugin入口，规定了返回值类型。如果有想法修改，则需修改上述代码结构中的plugin manager模块
+为方便扩展，该微信消息事件处理模块采取plugin模式进行开发。为了与service进行整合，编写的plugin必须包含一个固定名称的函数(`GetHandler`)作为plugin入口，并规定了返回值类型。如果有想法修改，则需修改上述folder tree中的plugin manager模块
 
 ### plugin entry
 
