@@ -8,6 +8,7 @@ import (
 	"../common/utils/wxbizmsgcrypt"
 	"../dto"
 	"../dto/wechatapiget"
+	"../dto/wechatapipush"
 	"../settings"
 )
 
@@ -21,10 +22,11 @@ type DemoService interface {
 	GetEmailList(string) (emailList []string, err error)
 	GetPhoneList(string) (phoneList []string, err error)
 	SendEmail([]string, string, string) error
+	SendWechatText([]string, string) error
 }
 
 type demoService struct {
-	baseService *BaseService
+	baseService *baseService
 	actionP     *actionplugin.ActionPlugin
 	emailClient *email.Client
 }
@@ -90,4 +92,16 @@ func (s *demoService) SendEmail(toUser []string, subject string, content string)
 		}
 	}()
 	return nil
+}
+
+func (s *demoService) SendWechatText(toParty []string, content string) error {
+	go func() {
+		msg := wechatapipush.NewTextMsg(content)
+		msg.SetToParty(toParty)
+		if err := s.baseService.wechatAPI.SendMsg(msg); err != nil {
+			settings.GetLogger(nil).Println(err.Error())
+		}
+	}()
+	return nil
+
 }

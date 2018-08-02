@@ -7,11 +7,12 @@ import (
 	"../common/utils/wxbizmsgcrypt"
 	"../service"
 	"../settings"
+	"encoding/json"
 	"github.com/kataras/iris"
 )
 
 type textSendDto struct {
-	Subject string `json:"subject"`
+	Subject string `json:"subject,omitempty"`
 	Content string `json:"content"`
 }
 
@@ -81,7 +82,10 @@ func (c *DemoController) GetEmail() error {
 
 func (c *DemoController) PostEmail() error {
 	jsonData := &textSendDto{}
-	c.Ctx.ReadJSON(jsonData)
+	err := c.Ctx.ReadJSON(jsonData)
+	if err != nil {
+		return fmt.Errorf("DemoController:PostEmail:%v", err)
+	}
 	PartyID := c.Ctx.URLParam("party_id")
 	toUser, err := c.Service.GetEmailList(PartyID)
 	if err != nil {
@@ -103,4 +107,37 @@ func (c *DemoController) GetPhone() error {
 	}
 	_, err = c.Ctx.WriteString(strings.Join(phoneList, " "))
 	return err
+}
+
+func (c *DemoController) GetText() error {
+	partyID := c.Ctx.URLParam("party_id")
+	if partyID == "" {
+		return fmt.Errorf("parameter not found: party_id")
+	}
+	userinfo, err := c.Service.GetUser(partyID)
+	if err != nil {
+		return fmt.Errorf("DemoController:GetText:%v", err)
+	}
+	data, err := json.Marshal(userinfo)
+	if err != nil {
+		return fmt.Errorf("DemoController:GetText:%v", err)
+	}
+	_, err = c.Ctx.Write(data)
+	return err
+}
+
+func (c *DemoController) PostText() error {
+	jsonData := &textSendDto{}
+	err := c.Ctx.ReadJSON(jsonData)
+	if err != nil {
+		return fmt.Errorf("DemoController:PostText:%v", err)
+	}
+	partyID := c.Ctx.URLParam("party_id")
+	if partyID == "" {
+		return fmt.Errorf("parameter not found: party_id")
+	}
+
+	c.Service.SendWechatText([]string{partyID}, jsonData.Content)
+	return nil
+
 }

@@ -35,15 +35,15 @@ type WechatAPIMsg struct {
 	News    newAttr   `json:"news,omitempty"`
 }
 
-func NewTextMsg(content string) WechatAPIMsg {
-	return WechatAPIMsg{
+func NewTextMsg(content string) *WechatAPIMsg {
+	return &WechatAPIMsg{
 		Msgtype: constatns.WechatMsgTypeText,
 		Text:    textAttr{content},
 	}
 }
 
-func NewImageMsg(mediaID string) WechatAPIMsg {
-	return WechatAPIMsg{
+func NewImageMsg(mediaID string) *WechatAPIMsg {
+	return &WechatAPIMsg{
 		Msgtype: constatns.WechatMsgTypeImage,
 		Image:   imageAttr{mediaID},
 	}
