@@ -39,6 +39,10 @@ func main() {
 		Logger.Fatal(err.Error())
 	}
 	app := iris.New()
+	app.Use(func(ctx iris.Context) {
+		ctx.Application().Logger().Infof("request for path:%s %s", ctx.Method(), ctx.Path())
+		ctx.Next()
+	})
 	mvc.New(app.Party("/")).Handle(&web.DemoController{Service: demoService})
 	app.Run(iris.Addr(CONFIG.Server), iris.WithCharset("UTF-8"), iris.WithoutVersionChecker)
 }

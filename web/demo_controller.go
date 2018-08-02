@@ -58,6 +58,7 @@ func (c *DemoController) Post() error {
 		return err
 	}
 	msg, err := c.Service.DecryptMsg(reciveMsg, msgSignature, timestamp, nonce)
+	settings.GetLogger(nil).Printf("DemoControler:Post:ReviceMsg:%v",msg)
 	if err != nil {
 		return err
 	}
@@ -97,7 +98,7 @@ func (c *DemoController) PostEmail() error {
 	if err != nil {
 		return err
 	}
-	settings.GetLogger(nil).Printf("send email to party:%s->%v", PartyID, toUser)
+	settings.GetLogger(nil).Printf("send email to party:%s->%v\n", PartyID, toUser)
 	c.Service.SendEmail(toUser, jsonData.Subject, jsonData.Content)
 	return nil
 }
@@ -142,12 +143,13 @@ func (c *DemoController) PostText() error {
 	if partyID == "" {
 		return fmt.Errorf("parameter not found: party_id")
 	}
-
+	settings.GetLogger(nil).Println("Democontroller:send msg to ",partyID)
 	c.Service.SendWechatText([]string{partyID}, jsonData.Content)
 	return nil
 
 }
 
 func (c *DemoController) GetPlugin() {
+	settings.GetLogger(nil).Println("DemoController: reflesh ")
 	c.Service.ReloadPlugin()
 }

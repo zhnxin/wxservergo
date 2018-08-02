@@ -12,7 +12,6 @@ import (
 var ClickEventFuncMap map[string]actionplugin.HandlerFunc
 
 func GetHandler(msg *dto.WXBizMsg) (actionplugin.HandlerFunc, error) {
-	fmt.Println(len(ClickEventFuncMap))
 	switch msg.MsgType {
 	case "event":
 		{
