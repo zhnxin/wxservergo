@@ -6,7 +6,6 @@ import (
 
 	"../common/utils/wxbizmsgcrypt"
 	"../service"
-	"../settings"
 	"encoding/json"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
@@ -55,22 +54,29 @@ func (c *DemoController) Post() error {
 	reciveMsg := wxbizmsgcrypt.ReviceMsg{}
 	err := c.Ctx.ReadXML(&reciveMsg)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
 	msg, err := c.Service.DecryptMsg(reciveMsg, msgSignature, timestamp, nonce)
-	settings.GetLogger(nil).Printf("DemoControler:Post:ReviceMsg:%v",msg)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
+	c.Ctx.Application().Logger().Infof("DemoControler:Post:ReviceMsg:%v", msg)
 	replyMsg, err := c.Service.MessageHandler(msg)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
 	encryptBytes, err := c.Service.EncryptMsg(replyMsg, nonce)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
 	_, err = c.Ctx.Write(encryptBytes)
+	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
+	}
 	return err
 }
 
@@ -81,6 +87,7 @@ func (c *DemoController) GetEmail() error {
 	}
 	emailList, err := c.Service.GetEmailList(partyID)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
 	_, err = c.Ctx.WriteString(strings.Join(emailList, " "))
@@ -96,9 +103,10 @@ func (c *DemoController) PostEmail() error {
 	PartyID := c.Ctx.URLParam("party_id")
 	toUser, err := c.Service.GetEmailList(PartyID)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return err
 	}
-	settings.GetLogger(nil).Printf("send email to party:%s->%v\n", PartyID, toUser)
+	c.Ctx.Application().Logger().Infof("send email to party:%s->%v\n", PartyID, toUser)
 	c.Service.SendEmail(toUser, jsonData.Subject, jsonData.Content)
 	return nil
 }
@@ -123,10 +131,12 @@ func (c *DemoController) GetText() error {
 	}
 	userinfo, err := c.Service.GetUser(partyID)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return fmt.Errorf("DemoController:GetText:%v", err)
 	}
 	data, err := json.Marshal(userinfo)
 	if err != nil {
+		c.Ctx.Application().Logger().Error(err)
 		return fmt.Errorf("DemoController:GetText:%v", err)
 	}
 	_, err = c.Ctx.Write(data)
@@ -143,13 +153,13 @@ func (c *DemoController) PostText() error {
 	if partyID == "" {
 		return fmt.Errorf("parameter not found: party_id")
 	}
-	settings.GetLogger(nil).Println("Democontroller:send msg to ",partyID)
+	c.Ctx.Application().Logger().Info("Democontroller:send msg to ", partyID)
 	c.Service.SendWechatText([]string{partyID}, jsonData.Content)
 	return nil
 
 }
 
 func (c *DemoController) GetPlugin() {
-	settings.GetLogger(nil).Println("DemoController: reflesh ")
+	c.Ctx.Application().Logger().Info("DemoController: refresh ")
 	c.Service.ReloadPlugin()
 }
