@@ -11,8 +11,8 @@
 
 api|http方法|功能
 -|-|-
-/|get|微信第三方接口验证
-/|post|微信消极事件处理
+/public|get|微信第三方接口验证
+/public|post|微信消极事件处理
 /text/?party_id|get|获取微信企业号部门成员信息
 /text/?party_id|post|给微信企业号对应部门推送文本消息
 /email/?party_id|get|获取微信企业号部门成员email列表
